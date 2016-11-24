@@ -1,16 +1,17 @@
 <?php
+//54.165.37.138 its my ip address, you must changed it by yours
 $output = shell_exec('curl -L  http://54.165.37.138:5001/v2/keys/name');
 $data=json_decode($output);
 $node=$data->node;
 $name=$node->value;
 echo "<pre>The docker name is $name</pre>";
-
+//54.165.37.138 its my ip address, you must changed it by yours
 $output = shell_exec('curl -L  http://54.165.37.138:5001/v2/keys/port');
 $data=json_decode($output);
 $node=$data->node;
 $port=$node->value;
 echo "<pre>The port is $port</pre>";
-
+//54.165.37.138 its my ip address, you must changed it by yours
 $output = shell_exec('curl -L  http://54.165.37.138:5001/v2/keys/psswd');
 $data=json_decode($output);
 $node=$data->node;
