@@ -45,7 +45,7 @@ Once this is done, a client can be connect to:
 
 -Load the script.sql (go to Section)
 
--Upload the index.php to /var/www/domain1.com/public_html/, /var/www/domain2.com/public_html/ and /var/www/domain3.com/public_html/
+-Upload the index.php to /var/www/domain1.com/public_html/, /var/www/domain2.com/public_html/ and /var/www/domain3.com/public_html/. You must modify the ip address on index.php file by yours
 
 Next, you can enter to:
 
