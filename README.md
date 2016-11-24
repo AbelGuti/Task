@@ -14,6 +14,8 @@ on
 
 ## Architecture Diagram
 
+![alt tag](https://github.com/AbelGuti/Task/blob/master/arqui.png)
+
 ##How it works?
 I work in a t2.micro EC2 instance ok AWS. The instance has a Ubuntu 16.04 OS and a Apache server with 3 virtual hosts: domain1.com,
 domain2.com, domain3.com. Each vh has a index.php file who request the credentials (port, password) to make a connection string for
