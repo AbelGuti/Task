@@ -12,6 +12,15 @@ Because we dont have a public DNS, we need to set those lines
 on
 >/etc/hosts
 
+Next, you can enter to:
+
+-http://domain1.com/index.php
+
+-http://domain2.com/index.php
+
+-http://domain3.com/index.php
+
+
 ## Architecture Diagram
 
 ![alt tag](https://github.com/AbelGuti/Task/blob/master/arqui.png)
