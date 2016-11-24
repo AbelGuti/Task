@@ -203,6 +203,8 @@ Grant permitions to createMysqlDocker.sh
 Run createMysqlDocker.sh, example 
 >./createMysqlDocker.sh MyMysql super_password 3306
 
+You must modify the ip address on createMysqlDocker.sh file beacuse 54.165.37.138 its my ip address, you must changed it by yours
+
 ##Load the script.sql
 
 When a Mysql docker its up, we can connect using:
