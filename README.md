@@ -32,17 +32,18 @@ Once this is done, a client can be connect to:
 
 
 ##Steps
--Start with local configuration (Section)
 
--Install Apache and configure VH (Section)
+-Start with local configuration (go to Section)
 
--Install PHP (Section)
+-Install Apache and configure VH (go to Section)
 
--Install Docker (Section)
+-Install PHP (go to Section)
 
--Running Docker images (Section)
+-Install Docker (go to Section)
 
--Load the script.sql (Section)
+-Running Docker images (go to Section)
+
+-Load the script.sql (go to Section)
 
 -Upload the index.php to /var/www/domain1.com/public_html/, /var/www/domain2.com/public_html/ and /var/www/domain3.com/public_html/
 
@@ -65,6 +66,8 @@ Because we dont have a public DNS, we need to set those lines
 
 on
 >/etc/hosts
+
+54.165.37.138 its my ip address, you must changed it by yours
 
 ##Install Apache and configure VH
 We get apache
@@ -188,6 +191,8 @@ Comand to ruan a ETCD cluster container
 >export PUBLIC_IP=54.165.37.138
 
 >docker run -d -p 8001:8001 -p 5001:5001 quay.io/coreos/etcd:v0.4.6 -peer-addr ${PUBLIC_IP}:8001 -addr ${PUBLIC_IP}:5001 -name etcd-node1
+
+54.165.37.138 its my ip address, you must changed it by yours
 
 pull Mysql image
 >docker pull mysql/mysql-server
