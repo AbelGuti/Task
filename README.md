@@ -8,15 +8,22 @@
 ![alt tag](https://github.com/AbelGuti/Task/blob/master/arqui.png)
 
 ##How it works?
-I work in a t2.micro EC2 instance ok AWS. The instance has a Ubuntu 16.04 OS and a Apache server with 3 virtual hosts: domain1.com,
-domain2.com, domain3.com. Each vh has a index.php file who request the credentials (port, password) to make a connection string for
-MySql docker instance, futher the docker name instances y request it too. This data its given to ETCD Docker. ETCD works like a 
-key-value storage, so the php client make a request for a especific value. To create a MySql docker we need to run the 
+I work in a t2.micro EC2 instance ok AWS. The instance has a Ubuntu 16.04 OS, an Apache server and the tool Confd installed.
+I use Confd to automate the creation of vhosts on Apache and to create a php page located in /var/www/main/index.php. This directory is used like a symbolic link to be consumed by the vhosts directories.
+I have a MySql docker instance, when I create a MySql docker the name of the docker, the port and the password of this its given to ETCD Docker. ETCD works like a key-value storage, so the Confd tool updates two destiny files with the necesary information to create the /var/www/main/index.php file and a script to automate the creation of vhosts.
+
+To create a MySql docker we need to run the 
 ~/createMysqlDocker.sh, this sh need 3 parameters, the first one is the docker name, the second a password and the third a port
 where the docker will be listen for a request. Example:
->~/createMysqlDocker myDocker super_password 3306
+>~/createMysqlDocker.sh myDocker super_password 3306
 
-Also this file set the credentials to the ETCD docker.
+
+To create a vhost we need to run the 
+~/addVhost.sh, this sh need 2 parameters, the first one is the name of the key for the etcd instance and the second the value of the key.
+Example:
+>~/createMysqlDocker.sh domain1.com domain1.com
+
+Also the createMysqlDocker.sh file set the credentials to the ETCD docker.
 When a Mysql docker its up, we can connect using:
 >sudo docker exec -it myDocker /bin/bash
 
@@ -25,17 +32,17 @@ next we can to connect to mysql:
 
 In the mysql console, we need to run the script.sql file.
 
-Once this is done, a client can be connect to:
+Once this is done, a client can be connect on any vhost that he was created:
 - domain1.com/index.php
 - domain2.com/index.php
 - domain3.com/index.php
+- ...
+- ...
 
 
 ##Steps
 
--Start with local configuration (go to Section)
-
--Install Apache and configure VH (go to Section)
+-Install Apache (go to Section)
 
 -Install PHP (go to Section)
 
@@ -45,112 +52,45 @@ Once this is done, a client can be connect to:
 
 -Load the script.sql (go to Section)
 
--Upload the index.php to /var/www/domain1.com/public_html/, /var/www/domain2.com/public_html/ and /var/www/domain3.com/public_html/. You must modify the ip address on index.php file by yours
+-Install Confd (go to Section)
 
-Next, you can enter to:
+-Run (ip and port where ETCD docker is linstening)
 
--http://domain1.com/index.php
+>sudo confd-0.11.0-linux-amd64 -onetime -backend etcd -node http://54.165.37.138:5001
 
--http://domain2.com/index.php
+-Grant permitions to:
+>sudo chmod 777 /temp/exe.sh
 
--http://domain3.com/index.php
+-Run exe.h and connect to your virtual host :D
+
+If you want to create another VH you only must run the addVhost.sh, execute the confd command and connect.
+
+-Local configuration (go to Section)
 
 
-##Start with local configuration
+##Local configuration
 Because we dont have a public DNS, we need to set those lines
+
 >54.165.37.138	domain1.com
 
 >54.165.37.138	domain2.com
 
 >54.165.37.138	domain3.com
 
+>...
+
+>...
+
 on
 >/etc/hosts
 
 54.165.37.138 its my ip address, you must changed it by yours
 
-##Install Apache and configure VH
+##Install Apache
 We get apache
 >sudo apt-get update
 
 >sudo apt-get install apache2
-
-Create a directories
->sudo mkdir -p /var/www/domain1.com/public_html
-
->sudo mkdir -p /var/www/domain2.com/public_html
-
->sudo mkdir -p /var/www/domain3.com/public_html
-
-
-Grant permission
->sudo chown -R $USER:$USER /var/www/domain1.com/public_html
-
->sudo chown -R $USER:$USER /var/www/domain2.com/public_html
-
->sudo chown -R $USER:$USER /var/www/domain3.com/public_html
-
->sudo chmod -R 755 /var/www
-
-
-Create a virtual host file on:
-
->sudo nano /etc/apache2/sites-available/domain1.com.conf
-
-Set this text
-```
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    ServerName domain1.com
-    ServerAlias www.domain1.com
-    DocumentRoot /var/www/domain1.com/public_html
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-```
-
-Create a virtual host file on:
-
->sudo nano /etc/apache2/sites-available/domain2.com.conf
-
-
-Set this text
-```
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    ServerName domain2.com
-    ServerAlias www.domain2.com
-    DocumentRoot /var/www/domain2.com/public_html
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-```
-Create a virtual host file on:
-
->sudo nano /etc/apache2/sites-available/domain3.com.conf
-
-
-Set this text
-```
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    ServerName domain3.com
-    ServerAlias www.domain3.com
-    DocumentRoot /var/www/domain3.com/public_html
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-```
-
-
-
-Use a2ensite to set avaible our sites
->sudo a2ensite domain1.com.conf
-
->sudo a2ensite domain2.com.conf
-
->sudo a2ensite domain3.com.conf
-
 
 Restart apache2 service
 >sudo service apache2 restart
@@ -214,4 +154,58 @@ next we can to connect to mysql:
 >mysql -u root --password=super_password
 
 In the mysql console, we need to copy the content of the script.sql file.
+
+##Intall Confd
+We move to
+>cd /usr/local/bin
+
+Get the bin
+>sudo wget https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64
+
+Grant permitions to exec.
+>sudo chmod +x confd
+
+Create two directories
+>sudo mkdir -p /etc/confd/{conf.d,templates}
+
+
+Create the next files:
+>sudo nano /etc/confd/conf.d/config.toml 
+
+
+```
+[template]
+src = "config.conf.tmpl"
+dest = "/tmp/config.conf"
+keys = [
+        "/name",
+        "/port",
+        "/psswd",
+]
+```
+
+
+>sudo nano /etc/confd/conf.d/vhost.toml 
+
+```
+[template]
+src = "vhost.conf.tmpl"
+dest = "/tmp/exe.sh"
+keys = [
+        "/vhosts",
+]
+```
+
+>sudo nano /etc/confd/templates/config.conf.tmpl
+
+and copy the text of the config.conf.tmpl file from the repository.
+
+
+>sudo nano /etc/confd/templates/vhost.conf.tmpl
+
+and copy the text of the vhost.conf.tmpl file from the repository.
+
+
+
+
 
