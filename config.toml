@@ -1,0 +1,8 @@
+[template]
+src = "config.conf.tmpl"
+dest = "/var/www/main/index.php"
+keys = [
+        "/name",
+        "/port",
+        "/psswd",
+]

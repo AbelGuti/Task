@@ -1,0 +1,7 @@
+[template]
+src = "vhost.conf.tmpl"
+dest = "/tmp/exe.sh"
+keys = [
+        "/vhosts",
+]
+

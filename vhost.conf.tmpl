@@ -1,0 +1,16 @@
+#!/bin/sh
+
+{{range getvs "/vhosts/*"}}
+sudo mkdir -p /var/www/{{.}}/public_html
+sudo chown -R $USER:$USER /var/www/{{.}}/public_html
+ln -s /var/www/main/* /var/www/{{.}}/public_html/
+echo '<VirtualHost *:80>
+    ServerAdmin admin@{{.}}
+    ServerName {{.}}
+    ServerAlias www.{{.}}
+    DocumentRoot /var/www/{{.}}/public_html
+</VirtualHost>' > /etc/apache2/sites-available/{{.}}.conf
+sudo a2ensite {{.}}.conf
+sudo service apache2 restart
+{{end}}
+
