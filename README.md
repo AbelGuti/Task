@@ -5,7 +5,7 @@
 
 ## Architecture Diagram
 
-![alt tag](https://github.com/AbelGuti/Task/blob/master/arqui.png)
+![alt tag](arqui.png)
 
 ##How it works?
 I work in a t2.micro EC2 instance ok AWS. The instance has a Ubuntu 16.04 OS, an Apache server and the tool Confd installed.
